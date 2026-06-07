@@ -3,6 +3,18 @@ import pytesseract
 from PIL import Image
 from pypdf import PdfReader
 
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
+
+load_dotenv()
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+genai.configure(api_key=GEMINI_API_KEY)
+
+model = genai.GenerativeModel("gemini-2.5-flash")
+
 # Tesseract Path
 pytesseract.pytesseract.tesseract_cmd = (
     r"C:\Program Files\Tesseract-OCR\tesseract.exe"
@@ -173,7 +185,35 @@ def analyze_resume(resume_text):
         missing_skills
     )
 
+def get_ai_feedback(resume_text, job_role):
 
+    prompt = f"""
+    You are an expert resume reviewer.
+
+    Target Role:
+    {job_role}
+
+    Resume:
+    {resume_text}
+
+    Give:
+    1. Strengths
+    2. Weaknesses
+    3. Missing Skills
+    4. ATS Improvement Suggestions
+
+    Keep the response concise.
+    """
+
+    try:
+
+        response = model.generate_content(prompt)
+
+        return response.text
+
+    except Exception as e:
+
+        return f"Error: {e}"
 # ---------------------------
 # Main App
 # ---------------------------
@@ -280,6 +320,18 @@ if uploaded_file:
         else:
 
             st.success("Excellent Resume Structure!")
+            st.subheader("🤖 Gemini AI Feedback")
+
+        with st.spinner("Analyzing resume with Gemini AI..."):
+
+            ai_feedback = get_ai_feedback(
+                resume_text,
+                job_role
+            )
+
+        st.write(ai_feedback)
+
+            
 
         # -------------------
         # Extracted Text
