@@ -2,8 +2,15 @@ import streamlit as st
 import pytesseract
 from PIL import Image
 from pypdf import PdfReader
+from reportlab.pdfgen import canvas
+
+from reportlab.platypus import SimpleDocTemplate
+from reportlab.platypus import Paragraph
+from reportlab.platypus import Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 
 import os
+from textwrap import wrap
 from dotenv import load_dotenv
 import google.generativeai as genai
 
@@ -214,6 +221,113 @@ def get_ai_feedback(resume_text, job_role):
     except Exception as e:
 
         return f"Error: {e}"
+def create_pdf_report(
+    score,
+    match_score,
+    found_skills,
+    missing_skills,
+    ai_feedback
+):
+
+    pdf_file = "resume_report.pdf"
+
+    doc = SimpleDocTemplate(pdf_file)
+
+    styles = getSampleStyleSheet()
+
+    content = []
+
+    content.append(
+        Paragraph("Resume Analysis Report", styles["Title"])
+    )
+
+    content.append(Spacer(1, 12))
+
+    content.append(
+        Paragraph(
+            f"<b>Resume Score:</b> {score}/100",
+            styles["Normal"]
+        )
+    )
+
+    content.append(
+        Paragraph(
+            f"<b>Job Match Score:</b> {match_score}%",
+            styles["Normal"]
+        )
+    )
+
+    content.append(Spacer(1, 12))
+
+    content.append(
+        Paragraph("<b>Skills Detected</b>", styles["Heading2"])
+    )
+
+    if found_skills:
+
+        for skill in found_skills:
+
+            content.append(
+                Paragraph(f"• {skill}", styles["Normal"])
+            )
+
+    else:
+
+        content.append(
+            Paragraph(
+                "No skills detected.",
+                styles["Normal"]
+            )
+        )
+
+    content.append(Spacer(1, 12))
+
+    content.append(
+        Paragraph("<b>Missing Skills</b>", styles["Heading2"])
+    )
+
+    if missing_skills:
+
+        for skill in missing_skills:
+
+            content.append(
+                Paragraph(f"• {skill}", styles["Normal"])
+            )
+
+    else:
+
+        content.append(
+            Paragraph(
+                "No missing skills detected.",
+                styles["Normal"]
+            )
+        )
+
+    content.append(Spacer(1, 12))
+
+    content.append(
+        Paragraph("<b>AI Feedback</b>", styles["Heading2"])
+    )
+
+    clean_feedback = (
+        ai_feedback
+        .replace("**", "")
+        .replace("#", "")
+    )
+
+    content.append(
+        Paragraph(
+            clean_feedback.replace("\n", "<br/>"),
+            styles["Normal"]
+        )
+    )
+
+    doc.build(content)
+
+    return pdf_file
+
+
+        
 # ---------------------------
 # Main App
 # ---------------------------
@@ -330,6 +444,23 @@ if uploaded_file:
             )
 
         st.write(ai_feedback)
+
+        pdf_file = create_pdf_report(
+    score,
+    match_score,
+    found_skills,
+    missing_skills,
+    ai_feedback
+)
+
+        with open(pdf_file, "rb") as file:
+
+            st.download_button(
+        label="📄 Download PDF Report",
+        data=file,
+        file_name="Resume_Report.pdf",
+        mime="application/pdf"
+    )
 
             
 
