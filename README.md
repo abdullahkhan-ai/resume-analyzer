@@ -4,7 +4,7 @@ AI-Powered Resume Screening, ATS Analysis & Job Matching Platform
 
 ## 🚀 Live Demo
 
-[Resume Analyzer Pro](YOUR_STREAMLIT_LINK_HERE)
+https://resume-analyzer-v2.streamlit.app/
 
 ---
 
@@ -103,13 +103,7 @@ Generate downloadable professional resume analysis reports.
 
 ## 📷 Application Preview
 
-![Resume Analyzer Dashboard](assets/dashboard.png)
-
-### Dashboard
-
-<img width="100%" src="SCREENSHOT_LINK_HERE">
-
----
+![image](paste-generated-link-here)
 
 ## 📂 Project Structure
 
