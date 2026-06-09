@@ -1,4 +1,4 @@
-# 👑 Resume Analyzer Pro
+# Resume Analyzer Pro
 
 AI-Powered Resume Screening, ATS Analysis & Job Matching Platform
 
@@ -103,7 +103,7 @@ Generate downloadable professional resume analysis reports.
 
 ## 📷 Application Preview
 
-![Resume Analyzer Dashboard](assets/dashboard.png)
+![Resume Analyzer Dashboard](assets/dashboard.png.png)
 
 ## 📂 Project Structure
 
