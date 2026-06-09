@@ -21,10 +21,7 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
-# Tesseract Path
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
+
 
 st.set_page_config(
     page_title="Resume Analyzer Pro",
@@ -144,7 +141,7 @@ job_role = st.selectbox(
 st.markdown("## 📂 Upload Resume")
 uploaded_file = st.file_uploader(
     "Upload Resume",
-    type=["pdf", "png", "jpg", "jpeg"]
+    type=["pdf"]
 )
 
 
@@ -172,12 +169,9 @@ def extract_text(file):
 
     else:
 
-        try:
-            image = Image.open(file)
-            text = pytesseract.image_to_string(image)
-
-        except Exception:
-            st.error("Could not read image.")
+     st.error(
+        "Only PDF resumes are supported in the deployed version."
+    )
 
     return text
 
