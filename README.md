@@ -103,7 +103,7 @@ Generate downloadable professional resume analysis reports.
 
 ## 📷 Application Preview
 
-![Resume Analyzer Dashboard](assets/dashboard.png.png)
+![Resume Analyzer Dashboard](image.png)
 
 ## 📂 Project Structure
 
