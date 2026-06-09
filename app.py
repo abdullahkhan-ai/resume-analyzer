@@ -2,7 +2,6 @@ import streamlit as st
 import pytesseract
 from PIL import Image
 from pypdf import PdfReader
-from reportlab.pdfgen import canvas
 
 from reportlab.platypus import SimpleDocTemplate
 from reportlab.platypus import Paragraph
@@ -32,22 +31,117 @@ st.set_page_config(
     page_icon="📄",
     layout="wide"
 )
+st.markdown("""
+<style>
 
-st.title("📄 Resume Analyzer Pro V5")
+/* Main Background */
+.stApp {
+    background-color: #F5F7FA;
+}
+
+/* Main Title */
+.main-title {
+    text-align: center;
+    color: #FFD700;
+    font-size: 48px;
+    font-weight: bold;
+}
+
+/* Subtitle */
+.sub-title {
+    text-align: center;
+    color: white;
+    font-size: 18px;
+}
+
+/* Header Box */
+.header-box {
+    background: linear-gradient(90deg, #0A3D91, #1E5CCB);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+}
+
+/* Metrics */
+[data-testid="stMetric"] {
+    background-color: white;
+    border: 2px solid #FFD700;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Buttons */
+.stButton button {
+    background-color: #0A3D91;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+}
+
+.stButton button:hover {
+    background-color: #1E5CCB;
+}
+
+/* Download Button */
+.stDownloadButton button {
+    background-color: #FFD700;
+    color: black;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+st.markdown("""
+<div class="header-box">
+    <div class="main-title"> Resume Analyzer Pro </div>
+    <div class="sub-title">
+        AI Powered Resume Intelligence Platform
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ---------------------------
 # Job Role Selection
 # ---------------------------
 
+st.markdown("## 🎯 Target Role")
 job_role = st.selectbox(
     "🎯 Select Target Role",
     [
         "AI Engineer",
+        "Machine Learning Engineer",
         "Data Scientist",
-        "Software Engineer"
+        "Data Analyst",
+        "Business Analyst",
+        "Software Engineer",
+        "Backend Developer",
+        "Frontend Developer",
+        "Full Stack Developer",
+        "Python Developer",
+        "Java Developer",
+        "Cloud Engineer",
+        "DevOps Engineer",
+        "Cybersecurity Analyst",
+        "Network Engineer",
+        "Prompt Engineer",
+        "AI Product Manager",
+        "Quant Developer",
+        "Quantitative Analyst",
+        "Algorithmic Trader",
+        "FinTech Engineer",
+        "Blockchain Developer",
+        "Mobile App Developer",
+        "UI/UX Designer",
+        "Product Manager"
     ]
 )
 
+st.markdown("## 📂 Upload Resume")
 uploaded_file = st.file_uploader(
     "Upload Resume",
     type=["pdf", "png", "jpg", "jpeg"]
@@ -91,7 +185,155 @@ def extract_text(file):
 # ---------------------------
 # Analyze Resume
 # ---------------------------
+JOB_REQUIREMENTS = {
 
+    "AI Engineer": [
+        "python", "machine learning", "tensorflow",
+        "pytorch", "deep learning", "nlp"
+    ],
+
+    "Machine Learning Engineer": [
+        "python", "machine learning", "tensorflow",
+        "pytorch", "scikit-learn"
+    ],
+
+    "Data Scientist": [
+        "python", "sql", "pandas",
+        "numpy", "machine learning"
+    ],
+
+    "Data Analyst": [
+        "sql", "excel", "power bi",
+        "tableau", "python"
+    ],
+
+    "Business Analyst": [
+        "excel", "power bi",
+        "tableau", "sql"
+    ],
+
+    "Software Engineer": [
+        "python", "git", "github",
+        "sql", "oop"
+    ],
+
+    "Backend Developer": [
+        "python", "django",
+        "flask", "api", "sql"
+    ],
+
+    "Frontend Developer": [
+        "html", "css",
+        "javascript", "react"
+    ],
+
+    "Full Stack Developer": [
+        "html", "css",
+        "javascript", "react",
+        "node", "sql"
+    ],
+
+    "Python Developer": [
+        "python", "flask",
+        "django", "sql"
+    ],
+
+    "Java Developer": [
+        "java", "spring",
+        "sql", "oop"
+    ],
+
+    "Cloud Engineer": [
+        "aws", "azure",
+        "gcp", "docker"
+    ],
+
+    "DevOps Engineer": [
+        "docker", "kubernetes",
+        "jenkins", "linux"
+    ],
+
+    "Cybersecurity Analyst": [
+        "network security",
+        "penetration testing",
+        "siem",
+        "linux"
+    ],
+
+    "Network Engineer": [
+        "networking",
+        "ccna",
+        "routing",
+        "switching"
+    ],
+
+    "Prompt Engineer": [
+        "prompt engineering",
+        "llm",
+        "chatgpt",
+        "gemini"
+    ],
+
+    "AI Product Manager": [
+        "ai",
+        "product management",
+        "analytics"
+    ],
+
+    "Quant Developer": [
+        "python",
+        "statistics",
+        "finance",
+        "algorithms"
+    ],
+
+    "Quantitative Analyst": [
+        "statistics",
+        "probability",
+        "python",
+        "finance"
+    ],
+
+    "Algorithmic Trader": [
+        "python",
+        "trading",
+        "finance",
+        "backtesting"
+    ],
+
+    "FinTech Engineer": [
+        "python",
+        "finance",
+        "api",
+        "sql"
+    ],
+
+    "Blockchain Developer": [
+        "solidity",
+        "ethereum",
+        "web3"
+    ],
+
+    "Mobile App Developer": [
+        "android",
+        "ios",
+        "flutter",
+        "react native"
+    ],
+
+    "UI/UX Designer": [
+        "figma",
+        "wireframe",
+        "prototype",
+        "design"
+    ],
+
+    "Product Manager": [
+        "product management",
+        "analytics",
+        "agile"
+    ]
+}
 def analyze_resume(resume_text):
 
     resume_lower = resume_text.lower()
@@ -108,33 +350,160 @@ def analyze_resume(resume_text):
         "pandas",
         "numpy",
         "git",
-        "github"
+        "github",
+        "tensorflow",
+        "pytorch",
+        "docker",
+        "aws",
+        "azure",
+        "react",
+        "flask",
+        "django"
     ]
 
-    # Skill Detection
+    # -----------------------
+    # Skills Score (20)
+    # -----------------------
+
+    skills_score = 0
 
     for skill in skills:
 
         if skill in resume_lower:
+
             found_skills.append(skill.title())
-            score += 10
 
-    # Resume Sections
+            skills_score += 2
 
-    if "project" in resume_lower:
-        score += 10
-    else:
+    skills_score = min(skills_score, 20)
+
+    score += skills_score
+
+    # -----------------------
+    # Projects Score (20)
+    # -----------------------
+
+    project_keywords = [
+        "project",
+        "developed",
+        "built",
+        "implemented",
+        "created"
+    ]
+
+    project_score = 0
+
+    for keyword in project_keywords:
+
+        if keyword in resume_lower:
+
+            project_score += 4
+
+    project_score = min(project_score, 20)
+
+    score += project_score
+
+    # -----------------------
+    # Experience Score (20)
+    # -----------------------
+
+    experience_keywords = [
+        "intern",
+        "internship",
+        "freelance",
+        "experience",
+        "developer"
+    ]
+
+    experience_score = 0
+
+    for keyword in experience_keywords:
+
+        if keyword in resume_lower:
+
+            experience_score += 4
+
+    experience_score = min(experience_score, 20)
+
+    score += experience_score
+
+    # -----------------------
+    # Education Score (15)
+    # -----------------------
+
+    education_keywords = [
+        "btech",
+        "be",
+        "bachelor",
+        "engineering",
+        "university"
+    ]
+
+    education_score = 0
+
+    for keyword in education_keywords:
+
+        if keyword in resume_lower:
+
+            education_score += 3
+
+    education_score = min(education_score, 15)
+
+    score += education_score
+
+    # -----------------------
+    # Certifications Score (10)
+    # -----------------------
+
+    cert_keywords = [
+        "certification",
+        "coursera",
+        "udemy",
+        "google",
+        "aws"
+    ]
+
+    cert_score = 0
+
+    for keyword in cert_keywords:
+
+        if keyword in resume_lower:
+
+            cert_score += 2
+
+    cert_score = min(cert_score, 10)
+
+    score += cert_score
+
+    # -----------------------
+    # GitHub / LinkedIn (10)
+    # -----------------------
+
+    if "github" in resume_lower:
+        score += 5
+
+    if "linkedin" in resume_lower:
+        score += 5
+
+    # -----------------------
+    # Structure Score (5)
+    # -----------------------
+
+    if "project" not in resume_lower:
         feedback.append("Add a Projects section.")
 
-    if "education" in resume_lower:
-        score += 10
-    else:
+    if "education" not in resume_lower:
         feedback.append("Add an Education section.")
 
-    if "experience" in resume_lower:
-        score += 10
-    else:
+    if "experience" not in resume_lower:
         feedback.append("Add an Experience section.")
+
+    if (
+        "project" in resume_lower
+        and "education" in resume_lower
+        and "experience" in resume_lower
+    ):
+        score += 5
 
     score = min(score, 100)
 
@@ -142,47 +511,58 @@ def analyze_resume(resume_text):
     # Job Match Score
     # -----------------------
 
-    if job_role == "AI Engineer":
+    required_skills = JOB_REQUIREMENTS.get(
+        job_role,
+        []
+    )
 
-        required_skills = [
-            "python",
-            "machine learning",
-            "tensorflow",
-            "pytorch"
-        ]
+    matched_skills = 0
 
-    elif job_role == "Data Scientist":
+    for skill in required_skills:
 
-        required_skills = [
-            "python",
-            "sql",
-            "pandas",
-            "numpy"
-        ]
+        if skill.lower() in resume_lower:
 
-    else:
+            matched_skills += 1
 
-        required_skills = [
-            "python",
-            "git",
-            "github",
-            "sql"
-        ]
+            if skill.title() not in found_skills:
+
+                found_skills.append(skill.title())
 
     missing_skills = []
 
     for skill in required_skills:
 
-        if skill not in resume_lower:
+        if skill.lower() not in resume_lower:
+
             missing_skills.append(skill.title())
 
+    skill_score = (
+        matched_skills / len(required_skills)
+    ) * 70
+
+    project_score = 0
+
+    project_keywords = [
+        "project",
+        "developed",
+        "built",
+        "implemented",
+        "created"
+    ]
+
+    for keyword in project_keywords:
+
+        if keyword in resume_lower:
+
+            project_score += 6
+
+    project_score = min(project_score, 30)
+
     match_score = int(
-        (
-            (len(required_skills) - len(missing_skills))
-            / len(required_skills)
-        )
-        * 100
+        skill_score + project_score
     )
+
+    match_score = min(match_score, 100)
 
     return (
         score,
@@ -218,9 +598,16 @@ def get_ai_feedback(resume_text, job_role):
 
         return response.text
 
-    except Exception as e:
+    except Exception:
 
-        return f"Error: {e}"
+        return """
+⚠️ Gemini AI Feedback Temporarily Unavailable
+
+Possible reasons:
+• Gemini service unavailable
+
+Please try again later.
+"""
 def create_pdf_report(
     score,
     match_score,
@@ -354,17 +741,35 @@ if uploaded_file:
 
         col1, col2 = st.columns(2)
 
+        ats_score = int((score + match_score) / 2)
+
+        col1, col2, col3 = st.columns(3)
+
         with col1:
-            st.metric("📊 Resume Score", f"{score}/100")
+            st.metric(
+                label="📊 Resume Score",
+                value=f"{score}/100"
+            )
 
         with col2:
-            st.metric("🎯 Job Match", f"{match_score}%")
+            st.metric(
+                label="🎯 Job Match",
+                value=f"{match_score}%"
+            )
+
+        with col3:
+            st.metric(
+                label="🤖 ATS Score",
+                value=f"{ats_score}/100"
+            )
 
         st.subheader("📊 Resume Score")
         st.progress(score / 100)
 
         st.subheader("🎯 Job Match Score")
         st.progress(match_score / 100)
+
+
 
         # -------------------
         # Resume Summary
@@ -390,7 +795,7 @@ if uploaded_file:
                 "Resume needs significant improvement in skills and structure."
             )
 
-        # -------------------
+                # -------------------
         # Skills Detected
         # -------------------
 
@@ -398,27 +803,33 @@ if uploaded_file:
 
         if found_skills:
 
+            skills_html = ""
+
             for skill in found_skills:
-                st.write(f"✅ {skill}")
+
+                skills_html += f"""
+                <span style="
+                background:#0A3D91;
+                color:white;
+                padding:8px 14px;
+                border-radius:20px;
+                margin:5px;
+                display:inline-block;
+                font-weight:bold;">
+                {skill}
+                </span>
+                """
+
+            st.markdown(
+                skills_html,
+                unsafe_allow_html=True
+            )
 
         else:
 
-            st.warning("No major skills detected.")
-
-        # -------------------
-        # Missing Skills
-        # -------------------
-
-        st.subheader("🚀 Missing Skills")
-
-        if missing_skills:
-
-            for skill in missing_skills:
-                st.write(f"❌ {skill}")
-
-        else:
-
-            st.success("All required skills found!")
+            st.warning(
+                "No major skills detected."
+            )
 
         # -------------------
         # Suggestions
@@ -429,14 +840,24 @@ if uploaded_file:
         if feedback:
 
             for item in feedback:
+
                 st.write(f"⚠️ {item}")
 
         else:
 
-            st.success("Excellent Resume Structure!")
-            st.subheader("🤖 Gemini AI Feedback")
+            st.success(
+                "Excellent Resume Structure!"
+            )
 
-        with st.spinner("Analyzing resume with Gemini AI..."):
+        # -------------------
+        # Gemini AI Feedback
+        # -------------------
+
+        st.subheader("🤖 Gemini AI Feedback")
+
+        with st.spinner(
+            "Analyzing resume with Gemini AI..."
+        ):
 
             ai_feedback = get_ai_feedback(
                 resume_text,
@@ -445,29 +866,35 @@ if uploaded_file:
 
         st.write(ai_feedback)
 
+        # -------------------
+        # PDF Download
+        # -------------------
+
         pdf_file = create_pdf_report(
-    score,
-    match_score,
-    found_skills,
-    missing_skills,
-    ai_feedback
-)
+            score,
+            match_score,
+            found_skills,
+            missing_skills,
+            ai_feedback
+        )
 
         with open(pdf_file, "rb") as file:
 
             st.download_button(
-        label="📄 Download PDF Report",
-        data=file,
-        file_name="Resume_Report.pdf",
-        mime="application/pdf"
-    )
-
-            
+                label="📄 Download PDF Report",
+                data=file,
+                file_name="Resume_Report.pdf",
+                mime="application/pdf"
+            )
 
         # -------------------
         # Extracted Text
         # -------------------
 
-        with st.expander("🔍 View Extracted Resume Text"):
+        with st.expander(
+            "🔍 View Extracted Resume Text"
+        ):
 
-            st.text(resume_text[:5000])
+            st.text(
+                resume_text[:5000]
+            )
