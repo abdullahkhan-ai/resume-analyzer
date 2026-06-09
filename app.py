@@ -6,16 +6,14 @@ from reportlab.platypus import Paragraph
 from reportlab.platypus import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
-import os
+
 from textwrap import wrap
-import os
+
 from textwrap import wrap
-from dotenv import load_dotenv
+
 import google.generativeai as genai
 
-load_dotenv()
-
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
 genai.configure(api_key=GEMINI_API_KEY)
 
