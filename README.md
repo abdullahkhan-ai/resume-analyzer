@@ -4,7 +4,7 @@ AI-Powered Resume Screening, ATS Analysis & Job Matching Platform
 
 ## 🚀 Live Demo
 
-[Resume Analyzer Pro] https://resume-analyzer-v2.streamlit.app/
+[Resume Analyzer Pro](YOUR_STREAMLIT_LINK_HERE)
 
 ---
 
@@ -107,7 +107,7 @@ Generate downloadable professional resume analysis reports.
 
 ### Dashboard
 
-<img width="100%" src="![alt text](image-1.png)">
+<img width="100%" src="SCREENSHOT_LINK_HERE">
 
 ---
 
@@ -140,7 +140,7 @@ Resume-Analyzer-Pro
 
 Abdullah Khan
 
-Computer Science Engineering Student at MIT Mumbai
+Computer Science Engineering Student
 
 Interested in:
 
