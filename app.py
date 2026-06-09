@@ -1,6 +1,4 @@
 import streamlit as st
-import pytesseract
-from PIL import Image
 from pypdf import PdfReader
 
 from reportlab.platypus import SimpleDocTemplate
@@ -8,6 +6,8 @@ from reportlab.platypus import Paragraph
 from reportlab.platypus import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
+import os
+from textwrap import wrap
 import os
 from textwrap import wrap
 from dotenv import load_dotenv
